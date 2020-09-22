@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AppXamarin.Views.DetalheView"
+             Title="{Binding Veiculo.Nome}">
+    <StackLayout Padding="25">
+        <TableView Intent="Settings">
+            <TableRoot>
+                <TableSection Title="Acessórios">
+                    <SwitchCell Text="{Binding TextoFreioABS}" On="{Binding OnFreioABS,Mode=TwoWay}"></SwitchCell>
+                    <SwitchCell Text="{Binding TextoArCondicionado}" On="{Binding OnArCondicionado,Mode=TwoWay}"></SwitchCell>
+                    <SwitchCell Text="{Binding TextoMP3Player}" On="{Binding OnMP3Player,Mode=TwoWay}"></SwitchCell>
+                    <TextCell Text="{Binding ValorTotal,Mode=TwoWay}"></TextCell>
+                </TableSection>
+            </TableRoot>
+        </TableView>
+        <Label Text="Página de Detalhe" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"></Label>
+        <Button x:Name="ButtonProximo" Text="Próximo" Clicked="ButtonProximo_Clicked" VerticalOptions="End"></Button>
+    </StackLayout>
+</ContentPage>
