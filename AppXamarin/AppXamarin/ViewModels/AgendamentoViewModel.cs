@@ -1,4 +1,5 @@
-﻿using AppXamarin.Models;
+﻿using AppXamarin.Data;
+using AppXamarin.Models;
 using System;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -8,15 +9,27 @@ namespace AppXamarin.ViewModels
     public class AgendamentoViewModel
     {
         public Agendamento Agendamento { get; set; }
-        public Veiculo Veiculo
+        public string Modelo
         {
             get
             {
-                return Agendamento.Veiculo;
+                return Agendamento.Modelo;
             }
             set
             {
-                Agendamento.Veiculo = value;
+                Agendamento.Modelo = value;
+            }
+        }
+
+        public decimal Preco
+        {
+            get
+            {
+                return Agendamento.Preco;
+            }
+            set
+            {
+                Agendamento.Preco = value;
             }
         }
         public string Nome
@@ -52,8 +65,6 @@ namespace AppXamarin.ViewModels
                 Agendamento.Email = value;
             }
         }
-
-
         public DateTime DataAgendamento
         {
             get
@@ -77,16 +88,58 @@ namespace AppXamarin.ViewModels
                 Agendamento.HoraAgendamento = value;
             }
         }
-
-        public AgendamentoViewModel(Veiculo veiculo)
+        public AgendamentoViewModel(Veiculo veiculo, Usuario usuario)
         {
-            this.Agendamento = new Agendamento();
-            this.Agendamento.Veiculo = veiculo;
+            this.Agendamento = new Agendamento(usuario.nome,usuario.telefone,usuario.email,veiculo.Nome,veiculo.Preco);
+            
+            
 
             AgendarCommand = new Command(() =>
             {
                 MessagingCenter.Send<Agendamento>(this.Agendamento, "Agendamento");
             });
+
+        }
+
+        public async void SalvarAgendamento()
+        {
+            /*HttpClient cliente = new HttpClient();
+
+            var dataHoraAgendamento = new DateTime(
+                DataAgendamento.Year, DataAgendamento.Month, DataAgendamento.Day,
+                HoraAgendamento.Hours, HoraAgendamento.Minutes, HoraAgendamento.Seconds);
+
+            var json = JsonConvert.SerializeObject(new
+            {
+                nome = Nome,
+                fone = Fone,
+                email = Email,
+                carro = Veiculo.Nome,
+                preco = Veiculo.Preco,
+                dataAgendamento = dataHoraAgendamento
+            });
+
+            var conteudo = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var resposta = await cliente.PostAsync(URL_POST_AGENDAMENTO, conteudo);
+            if (resposta.IsSuccessStatusCode)
+                MessagingCenter.Send<Agendamento>(this.Agendamento, "SucessoAgendamento");
+            else
+                MessagingCenter.Send<ArgumentException>(new ArgumentException(), "FalhaAgendamento");*/
+
+            SalvarAgendamentoDB();
+
+            MessagingCenter.Send<Agendamento>(this.Agendamento, "VoltarTelaInicial");
+
+        }
+
+        private void SalvarAgendamentoDB()
+        {
+            using (var conexao = DependencyService.Get<ISQLite>().PegarConnection())
+            {
+                AgendamentoDAO dao = new AgendamentoDAO(conexao);
+                dao.Salvar(new Agendamento(Nome, Fone, Email, Modelo, Preco));
+            }
 
         }
 

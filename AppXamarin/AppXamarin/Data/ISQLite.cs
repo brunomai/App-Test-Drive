@@ -8,7 +8,7 @@ namespace AppXamarin.Data
 {
     public interface ISQLite
     {
-        SQLiteConnection GetConnection();      
+        SQLiteConnection PegarConnection();      
         
     }
 }

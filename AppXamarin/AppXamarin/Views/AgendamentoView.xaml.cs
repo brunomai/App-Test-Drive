@@ -16,10 +16,10 @@ namespace AppXamarin.Views
     {
         public AgendamentoViewModel ViewModel { get; set; }
 
-        public AgendamentoView(Veiculo veiculo)
+        public AgendamentoView(Veiculo veiculo, Usuario usuario)
         {
             InitializeComponent();
-            this.ViewModel = new AgendamentoViewModel(veiculo);
+            this.ViewModel = new AgendamentoViewModel(veiculo, usuario);
             this.BindingContext = this.ViewModel;
         }          
 
@@ -28,19 +28,23 @@ namespace AppXamarin.Views
         {
             base.OnAppearing();
             MessagingCenter.Subscribe<Agendamento>(this, "Agendamento",
+                async (msg) =>
+                {
+                    var confirma = await DisplayAlert("Salvar Agendamento",
+                    "Deseja mesmo enviar o agendamento?",
+                    "sim", "não");
+
+                    if (confirma)
+                    {
+                        this.ViewModel.SalvarAgendamento();
+                    }
+                }
+                );
+
+            MessagingCenter.Subscribe<Agendamento>(this, "VoltarTelaInicial",
                 (msg) =>
                 {
-                    DisplayAlert("Agendamento",
-                    String.Format(
-                    @"Veiculo: {0}
-Nome: {1}
-Fone: {2} 
-Email:{3}
-Data Agendamento: {4}
-Hora: {5}",
-                    ViewModel.Agendamento.Veiculo.Nome, ViewModel.Agendamento.Nome, ViewModel.Agendamento.Fone, ViewModel.Agendamento.Email,
-                    ViewModel.Agendamento.DataAgendamento.ToString("dd/MM/yy"), ViewModel.Agendamento.HoraAgendamento)
-            , "OK");
+                    Navigation.PopToRootAsync();
                 }
                 );
         }

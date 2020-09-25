@@ -8,15 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
+
 namespace AppXamarin.Views
 {
 
     public partial class ListagemView : ContentPage
     {
+        readonly public Usuario usuario;
 
-        public ListagemView()
+        public ListagemView(Usuario usuario)
         {
             InitializeComponent();
+            this.usuario = usuario;
             //this.BindingContext = new ListagemViewModel();
         }
 
@@ -25,16 +28,22 @@ namespace AppXamarin.Views
             base.OnAppearing();
 
             MessagingCenter.Subscribe<Veiculo>(this, "VeiculoSelecionado",
-                (msg) =>
+                (veiculo)=>
                 {
-                    Navigation.PushAsync(new DetalheView(msg));
+                    Navigation.PushAsync(new DetalheView(veiculo, usuario));
                 }
                 );
+            MessagingCenter.Subscribe<ListagemViewModel>(this, "MeusAgendamentos",
+                (msg) =>
+                {
+                    Navigation.PushAsync(new MeusAgendamentosView());
+                });
         }
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
             MessagingCenter.Unsubscribe<Veiculo>(this, "VeiculoSelecionado");
+            MessagingCenter.Unsubscribe<ListagemViewModel>(this, "MeusAgendamentos");
         }
     }       
 }
